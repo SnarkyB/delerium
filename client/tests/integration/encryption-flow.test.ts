@@ -4,7 +4,8 @@ import { encryptString, decryptParts, b64u, ub64u } from '../../src/app';
 const mockCryptoKey = {
   type: 'secret',
   algorithm: { name: 'AES-GCM', length: 256 },
-  usages: ['encrypt', 'decrypt']
+  usages: ['encrypt', 'decrypt'],
+  extractable: true
 } as CryptoKey;
 
 const mockGenerateKey = jest.fn();

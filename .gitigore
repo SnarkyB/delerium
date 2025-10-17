@@ -1,0 +1,24 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin / IntelliJ / VS Code
+*.iml
+.idea/
+out/
+*.log
+
+# Docker / Compose
+server-data/
+data/
+*.db
+.env
+
+# Misc
+*.zip
+

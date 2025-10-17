@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="referrer" content="no-referrer" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+    <title>Create secure paste</title>
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
+      textarea { width: 100%; box-sizing: border-box; }
+      .row { margin: .75rem 0; }
+      button { padding: .6rem 1rem; border-radius: .5rem; border: 1px solid #ddd; cursor: pointer; }
+      pre { background: #f7f7f7; padding: 1rem; border-radius: .5rem; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <h1>New Paste (Zero‑Knowledge)</h1>
+    <div class="row">
+      <textarea id="paste" rows="16" placeholder="Type or paste text here…"></textarea>
+    </div>
+    <div class="row">
+      <label>Expire (minutes): <input type="number" id="mins" value="60" min="1"></label>
+      <label style="margin-left:1rem;">Single‑view <input type="checkbox" id="single"></label>
+    </div>
+    <div class="row">
+      <button id="save">Encrypt & Upload</button>
+    </div>
+    <pre id="out"></pre>
+    <p>View pastes via <code>/view.html?p=&lt;id&gt;#&lt;key&gt;:&lt;iv&gt;</code></p>
+    <script src="js/app.js"></script>
+  </body>
+</html>

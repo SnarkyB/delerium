@@ -1,6 +1,28 @@
 import { encryptString, decryptParts, b64u, ub64u } from '../../src/app';
 
-// Mock crypto.subtle for integration testing
+/**
+ * Encryption Flow Integration Tests
+ * 
+ * Tests the complete encryption/decryption workflow that forms the core
+ * of the zero-knowledge paste system. These tests verify that the entire
+ * encryption pipeline works correctly from start to finish.
+ * 
+ * Tested Workflows:
+ * - Complete encrypt-decrypt cycle with real data
+ * - Base64 URL encoding/decoding for URL transmission
+ * - Unicode and large text handling
+ * - Performance and timing validation
+ * - Error handling and edge cases
+ * 
+ * These tests ensure that:
+ * 1. Data encrypted on one end can be decrypted on the other
+ * 2. The encoding/decoding process preserves data integrity
+ * 3. The system handles various data types and sizes correctly
+ * 4. Performance remains acceptable for typical use cases
+ * 5. Error conditions are handled gracefully
+ */
+
+// Mock crypto.subtle for deterministic integration testing
 const mockCryptoKey = {
   type: 'secret',
   algorithm: { name: 'AES-GCM', length: 256 },

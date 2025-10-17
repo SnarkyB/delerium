@@ -1,5 +1,30 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * End-to-End Tests for Paste Creation and Viewing Flow
+ * 
+ * These tests simulate real user interactions in actual browsers to verify
+ * that the complete zkpaste workflow functions correctly from the user's perspective.
+ * 
+ * Tested User Journeys:
+ * - Complete paste creation workflow (type → encrypt → upload → share)
+ * - Paste viewing workflow (click link → decrypt → display)
+ * - Error handling and user feedback
+ * - Responsive design across different screen sizes
+ * - Cross-browser compatibility
+ * 
+ * These tests ensure that:
+ * 1. Users can successfully create and share pastes
+ * 2. Recipients can view pastes using the shared links
+ * 3. The UI is responsive and works on different devices
+ * 4. Error messages are clear and helpful
+ * 5. The application works consistently across browsers
+ * 
+ * Mock Strategy:
+ * - API endpoints are mocked to avoid dependency on backend
+ * - Real browser environment tests actual user interactions
+ * - Crypto operations run with real Web Crypto API
+ */
 test.describe('Paste Creation and Viewing Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Mock the API endpoints

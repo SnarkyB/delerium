@@ -29,7 +29,7 @@ interface EncryptedData {
   ctB64: string;
 }
 
-async function encryptString(plaintext: string): Promise<EncryptedData> {
+export async function encryptString(plaintext: string): Promise<EncryptedData> {
   const key = await genKey();
   const iv = genIV();
   // @ts-ignore
@@ -39,7 +39,7 @@ async function encryptString(plaintext: string): Promise<EncryptedData> {
   return { keyB64: b64u(raw), ivB64: b64u(iv), ctB64: b64u(ct) };
 }
 
-async function decryptParts(keyB64: string, ivB64: string, ctB64: string): Promise<string> {
+export async function decryptParts(keyB64: string, ivB64: string, ctB64: string): Promise<string> {
   const key = await crypto.subtle.importKey("raw", ub64u(keyB64) as any, { name:"AES-GCM" }, false, ["decrypt"]);
   const iv = new Uint8Array(ub64u(ivB64));
   const ct = new Uint8Array(ub64u(ctB64));
@@ -52,13 +52,13 @@ interface PowChallenge {
   difficulty: number;
 }
 
-async function fetchPow(): Promise<PowChallenge | null> {
+export async function fetchPow(): Promise<PowChallenge | null> {
   const r = await fetch("/api/pow");
   if (r.status === 204) return null;
   return await r.json();
 }
 
-function doPow(challenge: string, difficulty: number): Promise<number> {
+export function doPow(challenge: string, difficulty: number): Promise<number> {
   return new Promise((resolve) => {
     const target = difficulty;
     let nonce = 0;

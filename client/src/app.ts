@@ -1,10 +1,10 @@
 // === helpers ===
-function b64u(bytes: ArrayBuffer): string {
+export function b64u(bytes: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(bytes)))
     .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 
-function ub64u(s: string): ArrayBuffer {
+export function ub64u(s: string): ArrayBuffer {
   s = s.replace(/-/g,'+').replace(/_/g,'/'); 
   while (s.length % 4) s+='=';
   const bin = atob(s); 
@@ -13,11 +13,11 @@ function ub64u(s: string): ArrayBuffer {
   return out.buffer;
 }
 
-async function genKey(): Promise<CryptoKey> {
+export async function genKey(): Promise<CryptoKey> {
   return crypto.subtle.generateKey({ name:"AES-GCM", length:256 }, true, ["encrypt","decrypt"]);
 }
 
-function genIV(): Uint8Array { 
+export function genIV(): Uint8Array { 
   const iv = new Uint8Array(12); 
   crypto.getRandomValues(iv); 
   return iv; 

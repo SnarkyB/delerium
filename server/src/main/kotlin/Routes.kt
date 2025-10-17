@@ -12,7 +12,8 @@ fun Routing.apiRoutes(repo: PasteRepo, rl: TokenBucket?, pow: PowService?, cfg: 
         }
         post("/pastes") {
             if (rl != null) {
-                val ip = call.request.origin.remoteHost
+                val ip = call.request.headers["X-Forwarded-For"]?.split(",")?.first()?.trim() 
+                    ?: call.request.origin.remoteHost
                 if (!rl.allow("POST:$ip")) {
                     call.respond(HttpStatusCode.TooManyRequests, ErrorResponse("rate_limited")); return@post
                 }

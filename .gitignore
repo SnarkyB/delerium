@@ -3,6 +3,8 @@
 .DS_Store?
 **/.DS_Store
 **/.DS_Store?
+*/.DS_Store
+*/.DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
@@ -12,6 +14,10 @@ Thumbs.db
 # macOS Finder
 .fseventsd
 .fseventsd/
+
+# macOS metadata
+.AppleDouble
+.LSOverride
 
 # Node.js
 node_modules/

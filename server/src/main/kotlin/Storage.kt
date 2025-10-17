@@ -1,5 +1,14 @@
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import java.security.MessageDigest
 import java.time.Instant
 
@@ -45,11 +54,11 @@ class PasteRepo(private val db: Database, private val pepper: String) {
 
     fun getIfAvailable(id: String): ResultRow? = transaction(db) {
         val now = Instant.now().epochSecond
-        Pastes.select { Pastes.id eq id and (Pastes.expireTs greater now) }.singleOrNull()
+        Pastes.selectAll().where { Pastes.id eq id and (Pastes.expireTs greater now) }.singleOrNull()
     }
 
     fun incrementViews(id: String) = transaction(db) {
-        val row = Pastes.select { Pastes.id eq id }.singleOrNull() ?: return@transaction
+        val row = Pastes.selectAll().where { Pastes.id eq id }.singleOrNull() ?: return@transaction
         val allowed = row[Pastes.viewsAllowed]
         val used = row[Pastes.viewsUsed]
         if (allowed != null && used >= allowed) return@transaction
@@ -58,7 +67,7 @@ class PasteRepo(private val db: Database, private val pepper: String) {
 
     fun deleteIfTokenMatches(id: String, rawToken: String): Boolean = transaction(db) {
         val hash = hashToken(rawToken)
-        val row = Pastes.select { Pastes.id eq id }.singleOrNull() ?: return@transaction false
+        val row = Pastes.selectAll().where { Pastes.id eq id }.singleOrNull() ?: return@transaction false
         if (row[Pastes.deleteTokenHash] != hash) return@transaction false
         Pastes.deleteWhere { Pastes.id eq id } > 0
     }

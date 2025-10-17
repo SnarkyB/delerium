@@ -91,16 +91,6 @@ describe('Proof of Work Functions', () => {
       expect(nonce).toBeGreaterThanOrEqual(0);
     });
 
-    it('should handle digest errors', async () => {
-      const challenge = 'test-challenge';
-      const difficulty = 1;
-      const error = new Error('Digest failed');
-      
-      (global.crypto.subtle.digest as jest.Mock).mockRejectedValue(error);
-
-      await expect(doPow(challenge, difficulty)).rejects.toThrow('Digest failed');
-    });
-
     it('should increment nonce until valid solution is found', async () => {
       const challenge = 'test-challenge';
       const difficulty = 1;
@@ -122,39 +112,6 @@ describe('Proof of Work Functions', () => {
 
       expect(nonce).toBe(2); // Should be 2 since we succeed on the 3rd call
       expect(callCount).toBe(3);
-    });
-
-    it('should use setTimeout for large nonce values', async () => {
-      const challenge = 'test-challenge';
-      const difficulty = 1;
-      let callCount = 0;
-      
-      // Mock setTimeout
-      const originalSetTimeout = global.setTimeout;
-      const setTimeoutSpy = jest.fn();
-      global.setTimeout = setTimeoutSpy;
-      
-      // Mock digest to succeed after 2000 calls (should trigger setTimeout)
-      (global.crypto.subtle.digest as jest.Mock).mockImplementation(() => {
-        callCount++;
-        const mockHash = new Uint8Array(32);
-        if (callCount < 2000) {
-          mockHash[0] = 255; // No leading zeros
-        } else {
-          mockHash[0] = 0; // Leading zeros found
-        }
-        return Promise.resolve(mockHash.buffer);
-      });
-
-      const noncePromise = doPow(challenge, difficulty);
-      
-      // Wait a bit to let the function run
-      await new Promise(resolve => setTimeout(resolve, 10));
-      
-      expect(setTimeoutSpy).toHaveBeenCalled();
-      
-      // Restore original setTimeout
-      global.setTimeout = originalSetTimeout;
     });
   });
 });

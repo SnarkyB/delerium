@@ -8,7 +8,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:unit": "jest --testPathPattern=unit",
+    "test:unit": "jest --testPathIgnorePatterns=/integration/ --testPathIgnorePatterns=/e2e/",
     "test:integration": "jest --config jest.integration.config.js",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

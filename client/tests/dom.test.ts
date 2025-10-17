@@ -2,7 +2,24 @@
  * @jest-environment jsdom
  */
 
-// Mock the DOM functions by importing them after setting up the DOM
+/**
+ * DOM Interaction Functions Test Suite
+ * 
+ * Tests the client-side DOM manipulation and user interface interactions
+ * that are essential for the zkpaste application functionality.
+ * 
+ * This test suite verifies:
+ * 1. DOM element presence and correct types
+ * 2. Form data extraction and validation
+ * 3. URL parameter parsing for paste viewing
+ * 4. Error and success message display
+ * 5. User input handling and validation
+ * 
+ * These tests ensure the UI components work correctly without requiring
+ * the full application logic, focusing on isolated DOM operations.
+ * 
+ * Note: This uses jsdom environment to simulate browser DOM in Node.js
+ */
 describe('DOM Interaction Functions', () => {
   let mockDocument: Document;
   let mockWindow: Window;

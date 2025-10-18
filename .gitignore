@@ -7821,3 +7821,8 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+server/.gradle/8.14/checksums/checksums.lock
+server/.gradle/8.14/checksums/sha1-checksums.bin
+server/.gradle/8.14/fileHashes/fileHashes.bin
+server/.gradle/8.14/fileHashes/fileHashes.lock
+server/build/reports/problems/problems-report.html

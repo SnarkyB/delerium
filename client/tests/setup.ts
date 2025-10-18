@@ -1,4 +1,5 @@
 // Jest setup file for DOM environment
+import 'jest-dom/extend-expect';
 
 // Mock crypto.subtle for testing
 Object.defineProperty(global, 'crypto', {

@@ -1,6 +1,10 @@
-# zkpaste - Zero-Knowledge Paste System
+# Delerium.cc - Zero-Knowledge Paste System
 
-A secure, zero-knowledge paste system that ensures complete client-side encryption before data leaves the browser. Built with TypeScript, Kotlin (Ktor), and comprehensive testing.
+A secure, zero-knowledge paste system that ensures complete client-side encryption before data leaves the browser. Built with TypeScript, Kotlin (Ktor), and comprehensive testing. With features sourounding anonymotiy and privacy at it core. And if anyone askes you why you would appreciate probacuy. just ask them why they have lock on their door :)
+
+I got this idea from the cool people over at privatebin the old school paste bin usage back in the day. Feels free to suguest auy suggusting a feature,  buying me a coffee, contributing to the repo or jjust by using one of your own. The sounce will always be open and whatever so do what ya wanna do. But reach out sometime if you;d like :
+
+HACK THE PLANER!
 
 ## 🚀 Features
 

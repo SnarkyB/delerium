@@ -1,15 +1,55 @@
+/**
+ * Routes.kt - HTTP API endpoint definitions
+ * 
+ * This file defines all the REST API endpoints for the ZKPaste application:
+ * - GET  /api/pow - Request a proof-of-work challenge
+ * - POST /api/pastes - Create a new encrypted paste
+ * - GET  /api/pastes/{id} - Retrieve an encrypted paste
+ * - DELETE /api/pastes/{id}?token=... - Delete a paste with deletion token
+ * 
+ * All endpoints include appropriate validation and error handling.
+ */
+
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.request.*
 import io.ktor.http.*
 import io.ktor.server.routing.*
 
+/**
+ * Configure all API routes
+ * 
+ * Sets up the /api route group with all paste management endpoints.
+ * 
+ * @param repo Paste repository for database operations
+ * @param rl Optional token bucket rate limiter
+ * @param pow Optional proof-of-work service
+ * @param cfg Application configuration
+ */
 fun Routing.apiRoutes(repo: PasteRepo, rl: TokenBucket?, pow: PowService?, cfg: AppConfig) {
     route("/api") {
+        /**
+         * GET /api/pow
+         * Request a new proof-of-work challenge
+         * Returns 204 No Content if PoW is disabled
+         */
         get("/pow") {
             if (cfg.powEnabled && pow != null) call.respond(pow.newChallenge())
             else call.respond(HttpStatusCode.NoContent)
         }
+        /**
+         * POST /api/pastes
+         * Create a new encrypted paste
+         * 
+         * Performs the following checks:
+         * 1. Rate limiting (if enabled)
+         * 2. JSON parsing and validation
+         * 3. Proof-of-work verification (if enabled)
+         * 4. Size validation (content and IV)
+         * 5. Expiration time validation
+         * 
+         * Returns 201 with paste ID and deletion token on success
+         */
         post("/pastes") {
             if (rl != null) {
                 val ip = call.request.headers["X-Forwarded-For"]?.split(",")?.first()?.trim() 
@@ -46,6 +86,15 @@ fun Routing.apiRoutes(repo: PasteRepo, rl: TokenBucket?, pow: PowService?, cfg: 
                 call.respond(HttpStatusCode.InternalServerError, ErrorResponse("db_error"))
             }
         }
+        /**
+         * GET /api/pastes/{id}
+         * Retrieve an encrypted paste
+         * 
+         * Returns 404 if the paste doesn't exist or has expired.
+         * Increments view count and may delete the paste if:
+         * - singleView is true, or
+         * - viewsAllowed limit has been reached
+         */
         get("/pastes/{id}") {
             val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
             val row = repo.getIfAvailable(id) ?: return@get call.respond(HttpStatusCode.NotFound)
@@ -57,6 +106,13 @@ fun Routing.apiRoutes(repo: PasteRepo, rl: TokenBucket?, pow: PowService?, cfg: 
             }
             call.respond(payload)
         }
+        /**
+         * DELETE /api/pastes/{id}?token=...
+         * Delete a paste using its deletion token
+         * 
+         * Returns 403 Forbidden if the token doesn't match.
+         * Returns 204 No Content on successful deletion.
+         */
         delete("/pastes/{id}") {
             val id = call.parameters["id"] ?: return@delete call.respond(HttpStatusCode.BadRequest)
             val token = call.request.queryParameters["token"] ?: return@delete call.respond(

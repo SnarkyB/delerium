@@ -36,6 +36,7 @@ describe('Utility Functions', () => {
      * Edge case: Empty buffer should return empty string
      * This ensures the function handles boundary conditions gracefully
      */
+
     it('should handle empty ArrayBuffer', () => {
       const emptyBuffer = new ArrayBuffer(0);
       const result = b64u(emptyBuffer);

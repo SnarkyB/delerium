@@ -40,7 +40,7 @@ object Pastes : Table("pastes") {
     val viewsAllowed = integer("views_allowed").nullable()
     val viewsUsed = integer("views_used").default(0)
     val singleView = bool("single_view").default(false)
-    val mime = varchar("mime", 128).nullable()
+    val mime = varchar("mime", 128).nullable()®®
     val deleteTokenHash = varchar("delete_token_hash", 128)
     val createdAt = long("created_at")
 }

@@ -20,6 +20,7 @@ export function genIV() {
     const iv = new Uint8Array(12);
     crypto.getRandomValues(iv);
     return iv;
+
 }
 export async function encryptString(plaintext) {
     const key = await genKey();

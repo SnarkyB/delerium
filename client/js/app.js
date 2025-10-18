@@ -1,9 +1,9 @@
 // === helpers ===
-function b64u(bytes) {
+export function b64u(bytes) {
     return btoa(String.fromCharCode(...new Uint8Array(bytes)))
         .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-function ub64u(s) {
+export function ub64u(s) {
     s = s.replace(/-/g, '+').replace(/_/g, '/');
     while (s.length % 4)
         s += '=';
@@ -13,15 +13,16 @@ function ub64u(s) {
         out[i] = bin.charCodeAt(i);
     return out.buffer;
 }
-async function genKey() {
+export async function genKey() {
     return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
 }
-function genIV() {
+export function genIV() {
     const iv = new Uint8Array(12);
     crypto.getRandomValues(iv);
     return iv;
+
 }
-async function encryptString(plaintext) {
+export async function encryptString(plaintext) {
     const key = await genKey();
     const iv = genIV();
     // @ts-ignore
@@ -30,20 +31,20 @@ async function encryptString(plaintext) {
     // @ts-ignore
     return { keyB64: b64u(raw), ivB64: b64u(iv), ctB64: b64u(ct) };
 }
-async function decryptParts(keyB64, ivB64, ctB64) {
+export async function decryptParts(keyB64, ivB64, ctB64) {
     const key = await crypto.subtle.importKey("raw", ub64u(keyB64), { name: "AES-GCM" }, false, ["decrypt"]);
     const iv = new Uint8Array(ub64u(ivB64));
     const ct = new Uint8Array(ub64u(ctB64));
     const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
     return new TextDecoder().decode(pt);
 }
-async function fetchPow() {
+export async function fetchPow() {
     const r = await fetch("/api/pow");
     if (r.status === 204)
         return null;
     return await r.json();
 }
-function doPow(challenge, difficulty) {
+export function doPow(challenge, difficulty) {
     return new Promise((resolve) => {
         const target = difficulty;
         let nonce = 0;

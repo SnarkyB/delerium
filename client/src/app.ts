@@ -1,10 +1,10 @@
 // === helpers ===
-function b64u(bytes: ArrayBuffer): string {
+export function b64u(bytes: ArrayBuffer): string {
   return btoa(String.fromCharCode(...new Uint8Array(bytes)))
     .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 
-function ub64u(s: string): ArrayBuffer {
+export function ub64u(s: string): ArrayBuffer {
   s = s.replace(/-/g,'+').replace(/_/g,'/'); 
   while (s.length % 4) s+='=';
   const bin = atob(s); 
@@ -13,11 +13,11 @@ function ub64u(s: string): ArrayBuffer {
   return out.buffer;
 }
 
-async function genKey(): Promise<CryptoKey> {
+export async function genKey(): Promise<CryptoKey> {
   return crypto.subtle.generateKey({ name:"AES-GCM", length:256 }, true, ["encrypt","decrypt"]);
 }
 
-function genIV(): Uint8Array { 
+export function genIV(): Uint8Array { 
   const iv = new Uint8Array(12); 
   crypto.getRandomValues(iv); 
   return iv; 
@@ -29,7 +29,7 @@ interface EncryptedData {
   ctB64: string;
 }
 
-async function encryptString(plaintext: string): Promise<EncryptedData> {
+export async function encryptString(plaintext: string): Promise<EncryptedData> {
   const key = await genKey();
   const iv = genIV();
   // @ts-ignore
@@ -39,7 +39,7 @@ async function encryptString(plaintext: string): Promise<EncryptedData> {
   return { keyB64: b64u(raw), ivB64: b64u(iv), ctB64: b64u(ct) };
 }
 
-async function decryptParts(keyB64: string, ivB64: string, ctB64: string): Promise<string> {
+export async function decryptParts(keyB64: string, ivB64: string, ctB64: string): Promise<string> {
   const key = await crypto.subtle.importKey("raw", ub64u(keyB64) as any, { name:"AES-GCM" }, false, ["decrypt"]);
   const iv = new Uint8Array(ub64u(ivB64));
   const ct = new Uint8Array(ub64u(ctB64));
@@ -52,13 +52,13 @@ interface PowChallenge {
   difficulty: number;
 }
 
-async function fetchPow(): Promise<PowChallenge | null> {
+export async function fetchPow(): Promise<PowChallenge | null> {
   const r = await fetch("/api/pow");
   if (r.status === 204) return null;
   return await r.json();
 }
 
-function doPow(challenge: string, difficulty: number): Promise<number> {
+export function doPow(challenge: string, difficulty: number): Promise<number> {
   return new Promise((resolve) => {
     const target = difficulty;
     let nonce = 0;

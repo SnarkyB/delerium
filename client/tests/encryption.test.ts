@@ -1,13 +1,32 @@
 import { genKey, encryptString, decryptParts } from '../src/app';
 
-// Mock crypto.subtle methods
+/**
+ * Encryption Functions Test Suite
+ * 
+ * Tests the core cryptographic functions that implement the zero-knowledge encryption:
+ * - genKey: Generates AES-256-GCM encryption keys for secure data protection
+ * - encryptString: Encrypts plaintext using AES-256-GCM with random IV and key
+ * - decryptParts: Decrypts ciphertext using provided key, IV, and encrypted data
+ * 
+ * These functions are the foundation of the zero-knowledge paste system, ensuring:
+ * 1. Client-side encryption before data leaves the browser
+ * 2. Server never sees unencrypted content
+ * 3. Each paste uses unique encryption parameters (key + IV)
+ * 4. Strong AES-256-GCM encryption with authentication
+ * 
+ * Mock Strategy:
+ * - We mock the Web Crypto API (crypto.subtle) to test our logic without actual encryption
+ * - This allows deterministic testing while verifying correct API usage
+ */
+
+// Mock crypto.subtle methods for deterministic testing
 const mockGenerateKey = jest.fn();
 const mockImportKey = jest.fn();
 const mockExportKey = jest.fn();
 const mockEncrypt = jest.fn();
 const mockDecrypt = jest.fn();
 
-// Mock crypto key
+// Mock crypto key object that matches the CryptoKey interface
 const mockKey = {
   type: 'secret',
   algorithm: { name: 'AES-GCM', length: 256 },
@@ -28,11 +47,19 @@ beforeEach(() => {
 
 describe('Encryption Functions', () => {
   describe('genKey', () => {
+    /**
+     * Tests AES-256-GCM key generation
+     * 
+     * This function creates a new encryption key for each paste, ensuring
+     * that even if one key is compromised, other pastes remain secure.
+     * The key is generated with extractable=true so it can be exported
+     * and transmitted to the server for storage.
+     */
     it('should generate a new encryption key', async () => {
       mockGenerateKey.mockResolvedValue(mockKey);
-      
+
       const key = await genKey();
-      
+
       expect(mockGenerateKey).toHaveBeenCalledWith(
         { name: 'AES-GCM', length: 256 },
         true,

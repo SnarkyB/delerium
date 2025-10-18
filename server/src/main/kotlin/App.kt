@@ -1,3 +1,16 @@
+/**
+ * App.kt - Main application configuration and initialization
+ * 
+ * This file contains the entry point for the ZKPaste Ktor server application.
+ * It handles:
+ * - Application configuration loading from application.conf
+ * - Database connection pooling with HikariCP
+ * - Security headers (CSP, CORS, X-Content-Type-Options, etc.)
+ * - Plugin installation (compression, content negotiation, logging, CORS)
+ * - Initialization of core services (rate limiter, proof-of-work, paste repository)
+ * - Routing setup
+ */
+
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.http.HttpHeaders
@@ -14,6 +27,21 @@ import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.routing.routing
 import org.jetbrains.exposed.sql.Database
 
+/**
+ * Application configuration data class
+ * Holds all runtime configuration values loaded from application.conf and environment variables
+ * 
+ * @property dbPath Database JDBC connection string
+ * @property deletionPepper Secret pepper value for hashing deletion tokens (from env var)
+ * @property powEnabled Whether proof-of-work is enabled for paste creation
+ * @property powDifficulty Number of leading zero bits required in PoW solution
+ * @property powTtl Time-to-live for PoW challenges in seconds
+ * @property rlEnabled Whether rate limiting is enabled
+ * @property rlCapacity Maximum number of tokens in the rate limiter bucket
+ * @property rlRefill Number of tokens to refill per minute
+ * @property maxSizeBytes Maximum allowed size for paste content in bytes
+ * @property idLength Length of randomly generated paste IDs
+ */
 data class AppConfig(
     val dbPath: String,
     val deletionPepper: String,
@@ -27,6 +55,18 @@ data class AppConfig(
     val idLength: Int
 )
 
+/**
+ * Main application module function
+ * 
+ * This extension function on Application is the entry point for the Ktor server.
+ * It performs the following initialization steps:
+ * 1. Loads configuration from application.conf and environment variables
+ * 2. Installs HTTP plugins (compression, JSON serialization, logging, CORS)
+ * 3. Adds security headers to all responses
+ * 4. Sets up database connection pool
+ * 5. Initializes services (repository, rate limiter, proof-of-work)
+ * 6. Configures API routes
+ */
 fun Application.module() {
     val cfg = environment.config
     val appCfg = AppConfig(

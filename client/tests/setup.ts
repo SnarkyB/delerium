@@ -21,9 +21,10 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
-// Mock TextEncoder and TextDecoder
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+// Mock TextEncoder and TextDecoder using a different approach
+const { TextEncoder: NodeTextEncoder, TextDecoder: NodeTextDecoder } = require('util');
+(global as any).TextEncoder = NodeTextEncoder;
+(global as any).TextDecoder = NodeTextDecoder;
 
 // Mock btoa and atob
 global.btoa = (str: string) => Buffer.from(str, 'binary').toString('base64');

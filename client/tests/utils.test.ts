@@ -1,10 +1,27 @@
 import { b64u, ub64u, genIV } from '../src/app';
 
-// We need to export these functions from app.ts to test them
-// Let me create a separate utils file for testable functions
-
+/**
+ * Utility Functions Test Suite
+ * 
+ * Tests the core utility functions used throughout the zkpaste application:
+ * - b64u: Converts ArrayBuffer to URL-safe base64 encoding (no padding, +/ replaced with -_)
+ * - ub64u: Converts URL-safe base64 string back to ArrayBuffer
+ * - genIV: Generates cryptographically secure random initialization vectors for AES encryption
+ * 
+ * These functions are critical for:
+ * 1. Secure data encoding/decoding for URL transmission
+ * 2. Cryptographic operations requiring random IVs
+ * 3. Data integrity in the zero-knowledge paste system
+ */
 describe('Utility Functions', () => {
   describe('b64u', () => {
+    /**
+     * Tests base64 URL-safe encoding functionality
+     * 
+     * This function converts binary data (ArrayBuffer) to a URL-safe base64 string
+     * by replacing '+' with '-' and '/' with '_', and removing padding '=' characters.
+     * This is essential for embedding encrypted data in URLs without encoding issues.
+     */
     it('should encode ArrayBuffer to base64url string', () => {
       const testData = new Uint8Array([72, 101, 108, 108, 111]); // "Hello"
       const result = b64u(testData.buffer);
@@ -15,6 +32,11 @@ describe('Utility Functions', () => {
       expect(result).not.toContain('=');
     });
 
+    /**
+     * Edge case: Empty buffer should return empty string
+     * This ensures the function handles boundary conditions gracefully
+     */
+
     it('should handle empty ArrayBuffer', () => {
       const emptyBuffer = new ArrayBuffer(0);
       const result = b64u(emptyBuffer);
@@ -22,6 +44,10 @@ describe('Utility Functions', () => {
       expect(result).toBe('');
     });
 
+    /**
+     * Edge case: Single byte encoding
+     * Tests the minimum data size scenario for base64 encoding
+     */
     it('should handle single byte', () => {
       const singleByte = new Uint8Array([65]); // 'A'
       const result = b64u(singleByte.buffer);

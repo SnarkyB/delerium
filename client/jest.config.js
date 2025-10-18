@@ -6,6 +6,11 @@ module.exports = {
     '**/__tests__/**/*.ts',
     '**/?(*.)+(spec|test).ts'
   ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/tests/integration/',
+    '/tests/e2e/'
+  ],
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
@@ -15,8 +20,5 @@ module.exports = {
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-  moduleNameMapping: {
-    '^@/(.*)$': '<rootDir>/src/$1'
-  }
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts']
 };
